@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using HomeTheater.EF;
+using Microsoft.AspNetCore.Http.Features;
+
 namespace HomeTheater
 {
     public class Startup
@@ -23,8 +25,13 @@ namespace HomeTheater
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            var connection = "Data Source=169.254.244.73;Initial Catalog=MusicDB;User ID=sa;Password=Server@2017";
-            services.AddDbContext<MyContext>(options => options.UseSqlServer(connection));
+           
+            services.Configure<FormOptions>(x =>
+            {
+                x.ValueLengthLimit = int.MaxValue;
+
+                x.MultipartBodyLengthLimit = int.MaxValue;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

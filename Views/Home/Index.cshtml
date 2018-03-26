@@ -1,9 +1,36 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
-<form method="post" enctype="multipart/form-data" asp-controller="file" asp-action="FileSave">
-
-<input type="file">
-<input type="submit"  value="tijiao" >
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#upload").click(function (evt) {
+            var fileUpload = $("#files").get(0);
+            var files = fileUpload.files;
+            var data = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                data.append(files[i].name, files[i]);
+            }
+            $.ajax({
+                type: "POST",
+                url: "/File/InsertSong",
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (message) {
+                    alert(message);
+                },
+                error: function () {
+                    alert("There was error uploading files!");
+                }
+            });
+        });
+    });
+</script>
+<form method="post" enctype="multipart/form-data">
+    <input type="file" id="files"
+           name="files" multiple />
+    <input type="button"
+           id="upload"
+           value="Upload Selected Files" />
 </form>
