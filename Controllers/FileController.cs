@@ -20,6 +20,7 @@ namespace HomeTheater.Controllers
     {
         private string path = @"d:\MusicFiles";
 
+        //检查文件输出路径是否存在，若未存在将创建该文件夹
         public void PathTest()
         {
 
@@ -29,31 +30,9 @@ namespace HomeTheater.Controllers
             }
 
         }
-        [HttpPost("UploadFiles")]
-        public async Task<IActionResult> Post(List<IFormFile> files)
-        {
-            long size = files.Sum(f => f.Length);
 
-            // full path to file in temp location
-            var filePath = Path.GetTempFileName();
 
-            foreach (var formFile in files)
-            {
-                if (formFile.Length > 0)
-                {
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await formFile.CopyToAsync(stream);
-                    }
-                }
-            }
-
-            // process uploaded files
-            // Don't rely on or trust the FileName property without validation.
-
-            return Ok(new { count = files.Count, size, filePath });
-        }
-
+        //向系统中添加新的歌曲
         [HttpPost]
         public IActionResult InsertSong()
         {
@@ -76,7 +55,7 @@ namespace HomeTheater.Controllers
                     string songName = strArray[0];
                     string singer = strArray[1].Substring(0, strArray[1].IndexOf("."));
 
-                    if (!CheckSong(songName, singer))
+                    if (CheckSong(songName, singer))
                     {
                         msg = string.Format("{0}{1},", msg, songName);
                         continue;
@@ -110,6 +89,7 @@ namespace HomeTheater.Controllers
             return Json(dic);
         }
 
+        //检查要添加歌曲是否已存在库中
         public bool CheckSong(string name, string singer)
         {
             int result = 0;
